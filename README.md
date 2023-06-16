@@ -14,7 +14,7 @@ We plan to use a combination of micro and macro level analysis to investigate ou
 We will examine the constitutions of each nation individually at sentence level. This micro level analysis will inform us of the characteristics and key elements of each individual nation. The micro level analysis look at features for attributes such as 1,2,3 word pair frequency, number of words, frequency of words, topic modeling (LDA), and possibly a relationship extraction.
 Then we will compare the micro analysis of the democratic constitutions with the competitive authoritarian constitutions to see if there are macro level differences. We will use the microfeatures as our IVs and the constitution type (Democratic vs Competitive authoritarian) as a binary DV to train our model. 
 
-### NLP pipeline:
+#### NLP pipeline:
 Original Corpus --> 
 Data exploration --> 
 Cleaning & Preprocessing (lower, contractions, stop words, stemming, lemma, tokenization, POS tag) -->
@@ -22,7 +22,7 @@ Feature extraction (POS sent frequency, NER group sent freq, Bigram sent freq, T
 Modeling (Machine Learning or logistic model) -->
 Analysis
 
-### Evaluation:
+#### Evaluation:
 We will likely use a test-train split to cross-validate our model and prevent overfitting, however, we fear our sample size of 10 documents may be too small to effectively use the method. Therefore, we may simply undertake a logistic regression or similar model as an initial exploratory analysis to determine if there are sufficient differences in their natural language. This initial exploratory analysis could act as a test case that will allow researchers to later capture a much larger corpus of constitutions and test prediction ML models.  
 If we use a logistic regression, we will evaluate the model based on the substantive and statistical significance of our variables and the overall model fit (AIC and adj. R sq). If we use a machine learning model and test-train split, we will evaluate our model using a confusion matrix and area under the ROC curve. This will allow us to evaluate the precision, recall, & accuracy of our model. These metrics will determine the effectiveness of our model at predicting if the constitution of a nation belongs to a democracy or competitive authoritarian government. 
 
