@@ -1,38 +1,33 @@
 # Imports
 import nltk
-import os 
-# Importing matplotlib to help with plotting the data
-import matplotlib
-import contractions
-import re
+import spacy
+import string, random, re, contractions, matplotlib, os, sklearn 
 
 from nltk import word_tokenize
-from nltk import bigrams, trigrams
+from nltk import bigrams, trigrams, ngrams
+
 
 from nltk.corpus.reader import PlaintextCorpusReader
 from nltk.corpus.reader import CategorizedPlaintextCorpusReader
 from nltk.corpus import stopwords
 from nltk.corpus import reuters
+from nltk.probability import FreqDist
 
 from collections import Counter
 
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 
-from nltk.probability import FreqDist
+# from sklearn import CountVectorizer
 
 import random
 import functools
 
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-
 nltk.download('punkt')
 nltk.download('stopwords')
+nltk.download('reuters')
 nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
-nltk.download('reuters')
-nltk.download('punkt')
 
 
 def main():
@@ -81,6 +76,7 @@ def corpus_reader_categorized_example_manual():
 
 
 def corpus_counts(corpus_reader):
+  for fileid in corpus_reader:
     num_chars = len(corpus_reader.raw(fileid))
     num_words = len(corpus_reader.words(fileid))
     num_sents = len(corpus_reader.sents(fileid))
@@ -105,25 +101,18 @@ def nlp_pipe(corpus_reader):
       content = [contractions.fix(word) for word in content]  # expand contractions
       content = [porter_stemmer.stem(word) for word in content]
       content = [word_net_lemmatizer.lemmatize(word) for word in content]
-      # content = [content.str.replace('[^\w\s]','')]     # Remove punctuation, or do I not want this yet?      
-      content = [nltk.pos_tag(word_tokenize(word)) for word in content]
-      print('Final content\n', content)
-      print('\n\n\n')
+      content = [word_tokenize(word).tag_ for word in content] # Will this work with Spacy POS tag
+      content = [content.str.replace('[^\w\s]','')]     # Remove punctuation, or do I not want this yet?      
 
       Bag_of_Words(content)
       Get_Bigrams(content)
       Get_Trigrams(content)
-      #Get_Quadgrams(content)
-      #Get_NER(content)
-
-    # View corpus as sentences
-    #  for sent in corpus_reader.sents():
-    #   print(sent)
-    #  print('\n\n\n')
+      Get_Quadgrams(content)
+      Get_POSCounts(content)    
+      Get_NER(content)
 
 # Feature Extraction
-# Bigram, Trigram, Quadgram, NER group freq
-# TF-IDF at regime type level 
+# Bigram, Trigram, Quadgram, NER group, 
 
 # Bag of Words
 def Bag_of_Words(content):
@@ -158,13 +147,39 @@ def Get_Trigrams(content):
     # print(top_trigrams) 
   return top_trigrams 
 
-
 # Quadgrams
 # Get_QuadGrams(content):
+def Get_Quadgrams(content):
+  quadgrams_list = (list(ngrams(content, 4, pad_left=True, pad_right=True)))
+    # IDs the most common 20 words for each fileid
+  top_quadgrams = quadgrams_list.most_common(n=20) 
+    # Prints the most common 20 words for each fileid
+    # print(top_quadgrams) 
+  return top_quadgrams 
+
+# POS Counts
+# Get_POSCounts(content)
+def Get_POSCounts(content):
+  num_pos = content.count_by(spacy.attrs.POS)
+  for k,v in sorted(num_pos.items()):
+    pos_counts = (f'{k}. {content.vocab[k].text:{8}}: {v}')
+    return pos_counts
 
 
 # NER 
 # Get_NER(content):
+def Get_NER(content):
+    for ent in content.ents:
+      NER_labels = (ent.label_)    
+      if NER_labels == "NORP":
+         norp_count =+ 1
+      if NER_labels == "ORG":
+         org_count =+ 1
+      if NER_labels == "PERSON":
+         person_count =+ 1
+      return norp_count, org_count, person_count, 
+    
+      
 
 
 if __name__ == '__main__':
