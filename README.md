@@ -15,12 +15,12 @@ We will examine the constitutions of each nation individually at sentence level.
 Then we will compare the micro analysis of the democratic constitutions with the competitive authoritarian constitutions to see if there are macro level differences. We will use the microfeatures as our IVs and the constitution type (Democratic vs Competitive authoritarian) as a binary DV to train our model. 
 
 #### NLP pipeline:
-Original Corpus --> 
-Data exploration --> 
-Cleaning & Preprocessing (lower, contractions, stop words, stemming, lemma, tokenization, POS tag) -->
-Feature extraction (POS sent frequency, NER group sent freq, Bigram sent freq, Trigram sent freq, Quad-gram sent freq) -->
-Modeling (Machine Learning or logistic model) -->
-Analysis
+- Original Corpus --> 
+- Data exploration --> 
+- Cleaning & Preprocessing (lower, contractions, stop words, stemming, lemma, tokenization, POS tag) -->
+- Feature extraction (POS sent frequency, NER group sent freq, Bigram sent freq, Trigram sent freq, Quad-gram sent freq) -->
+- Modeling (Machine Learning or logistic model) -->
+- Evaluation 
 
 #### Evaluation:
 We will likely use a test-train split to cross-validate our model and prevent overfitting, however, we fear our sample size of 10 documents may be too small to effectively use the method. Therefore, we may simply undertake a logistic regression or similar model as an initial exploratory analysis to determine if there are sufficient differences in their natural language. This initial exploratory analysis could act as a test case that will allow researchers to later capture a much larger corpus of constitutions and test prediction ML models.  
