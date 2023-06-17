@@ -45,10 +45,7 @@ def main():
 
   corpus_reader = corpus_reader_categorized_example_manual()
   corpus_counts(corpus_reader)
-  content = nlp_pipe(corpus_reader)
-  Bag_of_Words(content)
-  Get_Bigrams(content)
-  Get_Trigrams(content)
+  nlp_pipe(corpus_reader)
 
 def corpus_reader_categorized_example_manual():
   corpus_reader_cat = CategorizedPlaintextCorpusReader('./Corpus', r'.*\_.*\.txt',
@@ -84,8 +81,6 @@ def corpus_reader_categorized_example_manual():
 
 
 def corpus_counts(corpus_reader):
-  print('chars/word\t', 'words/sent\t', 'words/vocab\t', 'fileids')
-  for fileid in corpus_reader.fileids():
     num_chars = len(corpus_reader.raw(fileid))
     num_words = len(corpus_reader.words(fileid))
     num_sents = len(corpus_reader.sents(fileid))
@@ -93,12 +88,8 @@ def corpus_counts(corpus_reader):
     frequency_distribution = FreqDist(corpus_reader.words(fileid))
 
     # how do I make the output a matrix of values rather than this printout?
-    print(num_chars, num_words, format(float(num_chars / num_words),'.3f'), '\t\t', 
-          num_words, num_sents, format(float(num_words / num_sents), '.3f'), '\t\t', 
-          num_vocab, format(float(num_words / num_vocab), '.3f'), '\t', 
-          fileid, '\n',
-          frequency_distribution)
-    
+    return num_chars, num_words, num_sents, num_vocab, frequency_distribution
+
 
 def nlp_pipe(corpus_reader):
   print('\n\n')
@@ -118,7 +109,12 @@ def nlp_pipe(corpus_reader):
       content = [nltk.pos_tag(word_tokenize(word)) for word in content]
       print('Final content\n', content)
       print('\n\n\n')
-      
+
+      Bag_of_Words(content)
+      Get_Bigrams(content)
+      Get_Trigrams(content)
+      #Get_Quadgrams(content)
+      #Get_NER(content)
 
     # View corpus as sentences
     #  for sent in corpus_reader.sents():
@@ -131,16 +127,14 @@ def nlp_pipe(corpus_reader):
 
 # Bag of Words
 def Bag_of_Words(content):
-  print('\n\n')
-  print('***********Bag of Words Language Model***********')
   counts = Counter(content)
     # total_count = len(reuters.words())
-    # IDs the most common 20 words for each fileid
+      # IDs the most common 20 words for each fileid
   Top_words = counts.most_common(n=20)
-    # Prints the most common 20 words for each fileid
-  print('\n\n')
-  print(Top_words) 
-    
+      # Prints the most common 20 words for each fileid
+    # print('\n\n')
+    # print(Top_words) 
+  return Top_words
     # Compute the Relative Frequencies
     # for word in counts:
     #  rel_freq = counts[word] / float(total_count)  # Why does it not work when I try "T = counts[word] /= float(total_count)"
@@ -148,17 +142,29 @@ def Bag_of_Words(content):
 
 # Bigrams
 def Get_Bigrams(content):
-    bigrams_list = list(bigrams(content))
+  bigrams_list = list(bigrams(content, pad_left=True, pad_right=True))
     # IDs the most common 20 words for each fileid
-    top_bigrams = bigrams_list.most_common(n=20) 
+  top_bigrams = bigrams_list.most_common(n=20) 
     # Prints the most common 20 words for each fileid
-    print(top_bigrams, fileid) 
+    # print(top_bigrams) 
+  return top_bigrams 
 
-
+# Trigrams
 def Get_Trigrams(content):
-   
+  trigrams_list = list(trigrams(content, pad_left=True, pad_right=True))
+    # IDs the most common 20 words for each fileid
+  top_trigrams = trigrams_list.most_common(n=20) 
+    # Prints the most common 20 words for each fileid
+    # print(top_trigrams) 
+  return top_trigrams 
 
 
+# Quadgrams
+# Get_QuadGrams(content):
+
+
+# NER 
+# Get_NER(content):
 
 
 if __name__ == '__main__':
