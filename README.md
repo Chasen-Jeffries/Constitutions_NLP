@@ -1,5 +1,13 @@
 # An NLP analysis of democratic and competitive authoritarian constitutions
 
+## Current situation:
+Current goal is to have the NLP pipeline extract features one a single document from my corpus. 
+- Categorized corpus reader was having issues. so I simplified to a simple reader only looking at one document. 
+- Need to continue to work on the functions for feature extraction as they are running into problems.
+
+
+
+
 ## Problem Statement:
 Since the end of the cold war, non-democratic national governments have attempted to do a better job of disguising their authoritarian traits. This has led to the rise of competitive authoritarian governments. These governments have elements of democracies, including frequent elections, that allow the government to claim to be democratic. However, they violate critical democratic elements including, free and fair elections, civil liberties, & voting access (nearly the whole adult population can vote). Many of these rules and concepts are secured through constitutions which define the scope and role of institutions in these new governments. The modern world has a harder time than ever determining if a nations regime is truly a democracy or a competitive authoritarian government. We want to know if there is a natural language difference in the constitutions of democracies and competitive authoritarian governments. Do democratic nations constitutions contain different natural language elements than competitive authoritarian governments? And if they do, can we use natural language processing (NLP) techniques to predict the regime of a nation based on their constitution? This project will undertake an initial exploration into whether NLP of constitutions can predict regime type. We suspect that a highly focused NLP analysis would be able to identify differences, possibly through relationship extraction or sentiment analysis, between the regimes. However for this initial, relatively low complexity NLP analysis, we hypothesize that democratic and competitive authoritarian constitutions will be extremely similar and may lack a natural language difference.
 
