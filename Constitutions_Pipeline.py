@@ -34,16 +34,20 @@ def main():
   print('NLP corpus reader')
   # Call functions to run examples
 
-  # corpus_reader = corpus_reader_simple_example()
-  # corpus_counts(corpus_reader)
-  # nlp_pipe(corpus_reader)
-
-  corpus_reader = corpus_reader_categorized_example_manual()
+  corpus_reader = corpus_reader_simple_example()
+  # corpus_reader = corpus_reader_categorized_example_manual()
   corpus_counts(corpus_reader)
   nlp_pipe(corpus_reader)
 
+
+def corpus_reader_simple_example():
+  corpus_reader = PlaintextCorpusReader('./Corpus', ['Australia_Constitution.txt'])
+  return corpus_reader
+
+  
+'''
 def corpus_reader_categorized_example_manual():
-  corpus_reader_cat = CategorizedPlaintextCorpusReader('./Corpus', r'.*\_.*\.txt',
+  corpus_reader = CategorizedPlaintextCorpusReader('./Corpus', r'.*\_.*\.txt',
                     cat_map={'./Corpus/Australia_Constitution.txt': ['AU_TXT'],
                     './Corpus/China_Constitution.txt': ['CN_TXT'],
                     './Corpus/Egypt_Constitution.txt': ['EG_TXT'],
@@ -55,75 +59,72 @@ def corpus_reader_categorized_example_manual():
                     './Corpus/US_Constitution.txt': ['US_TXT'],
                     './Corpus/Venezuela_Constitution.txt': ['VE_TXT'],
                     })
-  print('****Categories List Manual****')
-  print(corpus_reader_cat.categories())
-  for category in corpus_reader_cat.categories():
+  for category in corpus_reader.categories():
       print(category)
-  print()
-  print('****Documents by Categories Category****')
-  print(corpus_reader_cat.fileids('AU_TXT'))
-  print(corpus_reader_cat.fileids('CN_TXT'))
-  print(corpus_reader_cat.fileids('EG_TXT'))
-  print(corpus_reader_cat.fileids('FR_TXT'))
-  print(corpus_reader_cat.fileids('GM_TXT'))
-  print(corpus_reader_cat.fileids('JP_TXT'))
-  print(corpus_reader_cat.fileids('RU_TXT'))
-  print(corpus_reader_cat.fileids('TR_TXT'))
-  print(corpus_reader_cat.fileids('US_TXT'))
-  print(corpus_reader_cat.fileids('VE_TXT'))
-  print('*********************************************')
-  return corpus_reader_cat
-
+  print(corpus_reader.fileids('AU_TXT'))
+  print(corpus_reader.fileids('CN_TXT'))
+  print(corpus_reader.fileids('EG_TXT'))
+  print(corpus_reader.fileids('FR_TXT'))
+  print(corpus_reader.fileids('GM_TXT'))
+  print(corpus_reader.fileids('JP_TXT'))
+  print(corpus_reader.fileids('RU_TXT'))
+  print(corpus_reader.fileids('TR_TXT'))
+  print(corpus_reader.fileids('US_TXT'))
+  print(corpus_reader.fileids('VE_TXT'))
+  return corpus_reader
+'''
 
 def corpus_counts(corpus_reader):
-  for fileid in corpus_reader:
-    num_chars = len(corpus_reader.raw(fileid))
-    num_words = len(corpus_reader.words(fileid))
-    num_sents = len(corpus_reader.sents(fileid))
-    num_vocab = len(set([w.lower() for w in corpus_reader.words(fileid)]))
-    frequency_distribution = FreqDist(corpus_reader.words(fileid))
-
+#  for fileids in corpus_reader:
+    num_chars = len(corpus_reader.raw())
+    num_words = len(corpus_reader.words())
+    num_sents = len(corpus_reader.sents())
+    num_vocab = len(set([w.lower() for w in corpus_reader.words()]))
+    frequency_distribution = FreqDist(corpus_reader.words())
+    file_counts = [['num_chars', 'num_words', 'num_sents', 'num_vocab'],
+                   [num_chars, num_words, num_sents, num_vocab]]
     # how do I make the output a matrix of values rather than this printout?
-    return num_chars, num_words, num_sents, num_vocab, frequency_distribution
+    print(file_counts)
+    return file_counts
 
 
 def nlp_pipe(corpus_reader):
-  print('\n\n')
-  stop_words = stopwords.words('english')
-  stop_words = ['|', '&','!','@','#','$','%','*','(',')','-','_',"'",] + stop_words
-  porter_stemmer = PorterStemmer()
-  word_net_lemmatizer = WordNetLemmatizer()
+      print('\n\n')
+      stop_words = stopwords.words('english')
+      stop_words = ['|', '&','!','@','#','$','%','*','(',')','-','_',"'",";",":","'","."] + stop_words
+      porter_stemmer = PorterStemmer()
+      word_net_lemmatizer = WordNetLemmatizer()
 
 
 # Construct the NLP pipeline
-  for fileids in corpus_reader.fileids():
-      content = [w.lower() for w in corpus_reader.words(fileids) if w.lower() not in stop_words]
+# for fileids in corpus_reader.fileids():
+      content = [w.lower() for w in corpus_reader.words() if w.lower() not in stop_words]
       content = [contractions.fix(word) for word in content]  # expand contractions
       content = [porter_stemmer.stem(word) for word in content]
       content = [word_net_lemmatizer.lemmatize(word) for word in content]
-      content = [word_tokenize(word).tag_ for word in content] # Will this work with Spacy POS tag
-      content = [content.str.replace('[^\w\s]','')]     # Remove punctuation, or do I not want this yet?      
+      content = [nltk.pos_tag(word_tokenize(word)) for word in content]
+    #  Bag_of_Words(content)
+    #  Get_Bigrams(content)
+    #  Get_Trigrams(content)
+    #  Get_Quadgrams(content)
+    #  Get_POSCounts(content)    
+    #  Get_NER(content)
 
-      Bag_of_Words(content)
-      Get_Bigrams(content)
-      Get_Trigrams(content)
-      Get_Quadgrams(content)
-      Get_POSCounts(content)    
-      Get_NER(content)
+      return content
+
 
 # Feature Extraction
 # Bigram, Trigram, Quadgram, NER group, 
 
 # Bag of Words
 def Bag_of_Words(content):
-  counts = Counter(content)
-    # total_count = len(reuters.words())
+    counts = Counter(content.words())
       # IDs the most common 20 words for each fileid
-  Top_words = counts.most_common(n=20)
+    Top_words = counts.most_common(n=20)
       # Prints the most common 20 words for each fileid
     # print('\n\n')
-    # print(Top_words) 
-  return Top_words
+    print(Top_words) 
+    return Top_words
     # Compute the Relative Frequencies
     # for word in counts:
     #  rel_freq = counts[word] / float(total_count)  # Why does it not work when I try "T = counts[word] /= float(total_count)"
