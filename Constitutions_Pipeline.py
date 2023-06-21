@@ -34,17 +34,27 @@ def main():
   print('NLP corpus reader')
   # Call functions to run examples
 
-  corpus_reader = corpus_reader_simple_example()
+  corpus_reader = corpus_reader_plain_example()
   # corpus_reader = corpus_reader_categorized_example_manual()
   corpus_counts(corpus_reader)
   nlp_pipe(corpus_reader)
 
 
-def corpus_reader_simple_example():
-  corpus_reader = PlaintextCorpusReader('./Corpus', ['Australia_Constitution.txt'])
+
+def corpus_reader_plain_example():
+  corpus_reader = PlaintextCorpusReader('./Corpus', [
+                                        'Australia_Constitution.txt', 
+                                        'China_Constitution.txt',
+                                        'Egypt_Constitution.txt', 
+                                        'France_Constitution.txt',
+                                        'Germany_Constitution.txt',
+                                        'Japan_Constitution.txt', 
+                                        'Russia_Constitution.txt',
+                                        'Turkey_Constitution.txt', 
+                                        'US_Constitution.txt',
+                                        'Venezuela_Constitution.txt'])
   return corpus_reader
 
-  
 '''
 def corpus_reader_categorized_example_manual():
   corpus_reader = CategorizedPlaintextCorpusReader('./Corpus', r'.*\_.*\.txt',
@@ -80,7 +90,7 @@ def corpus_counts(corpus_reader):
     num_words = len(corpus_reader.words())
     num_sents = len(corpus_reader.sents())
     num_vocab = len(set([w.lower() for w in corpus_reader.words()]))
-    frequency_distribution = FreqDist(corpus_reader.words())
+    # frequency_distribution = FreqDist(corpus_reader.words())
     file_counts = [['num_chars', 'num_words', 'num_sents', 'num_vocab'],
                    [num_chars, num_words, num_sents, num_vocab]]
     # how do I make the output a matrix of values rather than this printout?
@@ -89,20 +99,21 @@ def corpus_counts(corpus_reader):
 
 
 def nlp_pipe(corpus_reader):
-      print('\n\n')
-      stop_words = stopwords.words('english')
-      stop_words = ['|', '&','!','@','#','$','%','*','(',')','-','_',"'",";",":","'","."] + stop_words
-      porter_stemmer = PorterStemmer()
-      word_net_lemmatizer = WordNetLemmatizer()
+  print('\n\n')
+  stop_words = stopwords.words('english')
+  stop_words = ['|', '&','!','@','#','$','%','*','(',')','-','_',"'",";",":","'","."] + stop_words
+  porter_stemmer = PorterStemmer()
+  word_net_lemmatizer = WordNetLemmatizer()
 
 
 # Construct the NLP pipeline
-# for fileids in corpus_reader.fileids():
+  for fileids in corpus_reader.fileids():
       content = [w.lower() for w in corpus_reader.words() if w.lower() not in stop_words]
       content = [contractions.fix(word) for word in content]  # expand contractions
       content = [porter_stemmer.stem(word) for word in content]
       content = [word_net_lemmatizer.lemmatize(word) for word in content]
       content = [nltk.pos_tag(word_tokenize(word)) for word in content]
+    
     #  Bag_of_Words(content)
     #  Get_Bigrams(content)
     #  Get_Trigrams(content)
@@ -130,14 +141,22 @@ def Bag_of_Words(content):
     #  rel_freq = counts[word] / float(total_count)  # Why does it not work when I try "T = counts[word] /= float(total_count)"
     #  print(rel_freq)
 
+from collections import defaultdict
+
 # Bigrams
 def Get_Bigrams(content):
+  bigrams_dict = defaultdict(lambda: defaultdict(lambda: 0))
+  
   bigrams_list = list(bigrams(content, pad_left=True, pad_right=True))
-    # IDs the most common 20 words for each fileid
-  top_bigrams = bigrams_list.most_common(n=20) 
+
+  for w1, w2 in bigrams(content, pad_right=True, pad_left=True):
+    bigrams_dict[w1, w2] += 1
+
+  for k, v in bigrams_dict.most_common(20):
+    print (k, v)
     # Prints the most common 20 words for each fileid
     # print(top_bigrams) 
-  return top_bigrams 
+  return content
 
 # Trigrams
 def Get_Trigrams(content):
@@ -180,8 +199,6 @@ def Get_NER(content):
          person_count =+ 1
       return norp_count, org_count, person_count, 
     
-      
-
 
 if __name__ == '__main__':
   main()
