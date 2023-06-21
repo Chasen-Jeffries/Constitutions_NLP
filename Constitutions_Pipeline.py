@@ -1,7 +1,7 @@
 # Imports
 import nltk
 import spacy
-import string, random, re, contractions, matplotlib, os, sklearn 
+import string, random, re, os #sklearn# contractions, matplotlib,  
 
 from nltk import word_tokenize
 from nltk import bigrams, trigrams, ngrams
@@ -30,29 +30,32 @@ nltk.download('averaged_perceptron_tagger')
 
 
 def main():
-  print('NLP corpus reader')
-  # Call functions to run examples
-
-  corpus_reader = corpus_reader_plain_example()
-  # corpus_reader = corpus_reader_categorized_example_manual()
-  corpus_counts(corpus_reader)
-  nlp_pipe(corpus_reader)
-
-
+	print('NLP corpus reader')
+	# Call functions to run examples
+	
+	corpus_reader = corpus_reader_plain_example()
+	# corpus_reader = corpus_reader_categorized_example_manual()
+	print()
+	corpus_counts(corpus_reader)
+	print()
+	new_content = nlp_pipe(corpus_reader)
+	print(new_content)
+	
 
 def corpus_reader_plain_example():
-  corpus_reader = PlaintextCorpusReader('./Corpus', [
-                                        'Australia_Constitution.txt', 
-                                        'China_Constitution.txt',
-                                        'Egypt_Constitution.txt', 
-                                        'France_Constitution.txt',
-                                        'Germany_Constitution.txt',
-                                        'Japan_Constitution.txt', 
-                                        'Russia_Constitution.txt',
-                                        'Turkey_Constitution.txt', 
-                                        'US_Constitution.txt',
-                                        'Venezuela_Constitution.txt'])
-  return corpus_reader
+	corpus_reader = PlaintextCorpusReader('./Corpus',
+					['Australia_Constitution.txt',
+					'China_Constitution.txt',
+					'Egypt_Constitution.txt',
+					'France_Constitution.txt',
+					'Germany_Constitution.txt',
+					'Japan_Constitution.txt',
+					'Russia_Constitution.txt',
+					'Turkey_Constitution.txt',
+					'US_Constitution.txt',
+					'Venezuela_Constitution.txt'])
+	return corpus_reader
+
 
 '''
 def corpus_reader_categorized_example_manual():
@@ -83,8 +86,9 @@ def corpus_reader_categorized_example_manual():
   return corpus_reader
 '''
 
+
 def corpus_counts(corpus_reader):
-  for fileids in corpus_reader:
+  for fileids in corpus_reader.fileids():
     num_chars = len(corpus_reader.raw(fileids))
     num_words = len(corpus_reader.words(fileids))
     num_sents = len(corpus_reader.sents(fileids))
@@ -93,110 +97,119 @@ def corpus_counts(corpus_reader):
     file_counts = [['num_chars', 'num_words', 'num_sents', 'num_vocab'],
                    [num_chars, num_words, num_sents, num_vocab]]
     # how do I make the output a matrix of values rather than this printout?
-    print(file_counts)
+    print('From corpus_counts():', file_counts)
     return file_counts
 
 
 def nlp_pipe(corpus_reader):
   print('\n\n')
   stop_words = stopwords.words('english')
-  stop_words = ['|', '&','!','@','#','$','%','*','(',')','-','_',"'",";",":","'","."] + stop_words
+  stop_words = [
+    '|', '&', '!', '@', '#', '$', '%', '*', '(', ')', '-', '_', "'", ";", ":",
+    "'", "."
+  ] + stop_words
   porter_stemmer = PorterStemmer()
   word_net_lemmatizer = WordNetLemmatizer()
 
-
-# Construct the NLP pipeline
+  # Construct the NLP pipeline
   for fileids in corpus_reader.fileids():
-      content = [w.lower() for w in corpus_reader.words(fileids) if w.lower() not in stop_words]
-      content = [contractions.fix(word) for word in content]  # expand contractions
-      content = [porter_stemmer.stem(word) for word in content]
-      content = [word_net_lemmatizer.lemmatize(word) for word in content]
-      content = [nltk.pos_tag(word_tokenize(word)) for word in content]
-    
+    content = [
+      w.lower() for w in corpus_reader.words(fileids)
+      if w.lower() not in stop_words
+    ]
+    #content = [contractions.fix(word) for word in content]  # expand contractions
+    content = [porter_stemmer.stem(word) for word in content]
+    content = [word_net_lemmatizer.lemmatize(word) for word in content]
+    content = [nltk.pos_tag(word_tokenize(word)) for word in content]
+
     #  Bag_of_Words(content)
     #  Get_Bigrams(content)
     #  Get_Trigrams(content)
     #  Get_Quadgrams(content)
-    #  Get_POSCounts(content)    
+    #  Get_POSCounts(content)
     #  Get_NER(content)
 
-      return content
+    return content
 
 
 # Feature Extraction
-# Bigram, Trigram, Quadgram, NER group, 
+# Bigram, Trigram, Quadgram, NER group,
+
 
 # Bag of Words
 def Bag_of_Words(content):
-    counts = Counter(content.words())
-      # IDs the most common 20 words for each fileid
-    Top_words = counts.most_common(n=20)
-      # Prints the most common 20 words for each fileid
-    # print('\n\n')
-    print(Top_words) 
-    return Top_words
-    # Compute the Relative Frequencies
-    # for word in counts:
-    #  rel_freq = counts[word] / float(total_count)  # Why does it not work when I try "T = counts[word] /= float(total_count)"
-    #  print(rel_freq)
+  counts = Counter(content.words())
+  # IDs the most common 20 words for each fileid
+  Top_words = counts.most_common(n=20)
+  # Prints the most common 20 words for each fileid
+  # print('\n\n')
+  print(Top_words)
+  return Top_words
+  # Compute the Relative Frequencies
+  # for word in counts:
+  #  rel_freq = counts[word] / float(total_count)  # Why does it not work when I try "T = counts[word] /= float(total_count)"
+  #  print(rel_freq)
 
 
 # Bigrams
 def Get_Bigrams(content):
   bigrams_dict = defaultdict(lambda: defaultdict(lambda: 0))
-  
+
   bigrams_list = list(bigrams(content, pad_left=True, pad_right=True))
 
   for w1, w2 in bigrams(content, pad_right=True, pad_left=True):
     bigrams_dict[w1, w2] += 1
 
   for k, v in bigrams_dict.most_common(20):
-    print (k, v)
+    print(k, v)
     # Prints the most common 20 words for each fileid
-    # print(top_bigrams) 
+    # print(top_bigrams)
   return content
+
 
 # Trigrams
 def Get_Trigrams(content):
   trigrams_list = list(trigrams(content, pad_left=True, pad_right=True))
-    # IDs the most common 20 words for each fileid
-  top_trigrams = trigrams_list.most_common(n=20) 
-    # Prints the most common 20 words for each fileid
-    # print(top_trigrams) 
-  return top_trigrams 
+  # IDs the most common 20 words for each fileid
+  top_trigrams = trigrams_list.most_common(n=20)
+  # Prints the most common 20 words for each fileid
+  # print(top_trigrams)
+  return top_trigrams
+
 
 # Quadgrams
 # Get_QuadGrams(content):
 def Get_Quadgrams(content):
   quadgrams_list = (list(ngrams(content, 4, pad_left=True, pad_right=True)))
-    # IDs the most common 20 words for each fileid
-  top_quadgrams = quadgrams_list.most_common(n=20) 
-    # Prints the most common 20 words for each fileid
-    # print(top_quadgrams) 
-  return top_quadgrams 
+  # IDs the most common 20 words for each fileid
+  top_quadgrams = quadgrams_list.most_common(n=20)
+  # Prints the most common 20 words for each fileid
+  # print(top_quadgrams)
+  return top_quadgrams
+
 
 # POS Counts
 # Get_POSCounts(content)
 def Get_POSCounts(content):
   num_pos = content.count_by(spacy.attrs.POS)
-  for k,v in sorted(num_pos.items()):
+  for k, v in sorted(num_pos.items()):
     pos_counts = (f'{k}. {content.vocab[k].text:{8}}: {v}')
     return pos_counts
 
 
-# NER 
+# NER
 # Get_NER(content):
 def Get_NER(content):
-    for ent in content.ents:
-      NER_labels = (ent.label_)    
-      if NER_labels == "NORP":
-         norp_count =+ 1
-      if NER_labels == "ORG":
-         org_count =+ 1
-      if NER_labels == "PERSON":
-         person_count =+ 1
-      return norp_count, org_count, person_count, 
-    
+  for ent in content.ents:
+    NER_labels = (ent.label_)
+    if NER_labels == "NORP":
+      norp_count = +1
+    if NER_labels == "ORG":
+      org_count = +1
+    if NER_labels == "PERSON":
+      person_count = +1
+    return norp_count, org_count, person_count,
+
 
 if __name__ == '__main__':
   main()
