@@ -6,14 +6,14 @@ import string, random, re, contractions, matplotlib, os, sklearn
 from nltk import word_tokenize
 from nltk import bigrams, trigrams, ngrams
 
-
 from nltk.corpus.reader import PlaintextCorpusReader
 from nltk.corpus.reader import CategorizedPlaintextCorpusReader
 from nltk.corpus import stopwords
-from nltk.corpus import reuters
+
 from nltk.probability import FreqDist
 
 from collections import Counter
+from collections import defaultdict
 
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
@@ -25,7 +25,6 @@ import functools
 
 nltk.download('punkt')
 nltk.download('stopwords')
-nltk.download('reuters')
 nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
 
@@ -85,12 +84,12 @@ def corpus_reader_categorized_example_manual():
 '''
 
 def corpus_counts(corpus_reader):
-#  for fileids in corpus_reader:
-    num_chars = len(corpus_reader.raw())
-    num_words = len(corpus_reader.words())
-    num_sents = len(corpus_reader.sents())
-    num_vocab = len(set([w.lower() for w in corpus_reader.words()]))
-    # frequency_distribution = FreqDist(corpus_reader.words())
+  for fileids in corpus_reader:
+    num_chars = len(corpus_reader.raw(fileids))
+    num_words = len(corpus_reader.words(fileids))
+    num_sents = len(corpus_reader.sents(fileids))
+    num_vocab = len(set([w.lower() for w in corpus_reader.words(fileids)]))
+    # frequency_distribution = FreqDist(corpus_reader.words(fileids))
     file_counts = [['num_chars', 'num_words', 'num_sents', 'num_vocab'],
                    [num_chars, num_words, num_sents, num_vocab]]
     # how do I make the output a matrix of values rather than this printout?
@@ -108,7 +107,7 @@ def nlp_pipe(corpus_reader):
 
 # Construct the NLP pipeline
   for fileids in corpus_reader.fileids():
-      content = [w.lower() for w in corpus_reader.words() if w.lower() not in stop_words]
+      content = [w.lower() for w in corpus_reader.words(fileids) if w.lower() not in stop_words]
       content = [contractions.fix(word) for word in content]  # expand contractions
       content = [porter_stemmer.stem(word) for word in content]
       content = [word_net_lemmatizer.lemmatize(word) for word in content]
@@ -141,7 +140,6 @@ def Bag_of_Words(content):
     #  rel_freq = counts[word] / float(total_count)  # Why does it not work when I try "T = counts[word] /= float(total_count)"
     #  print(rel_freq)
 
-from collections import defaultdict
 
 # Bigrams
 def Get_Bigrams(content):
