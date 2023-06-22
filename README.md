@@ -2,7 +2,6 @@
 
 ## Current situation:
 Current goal is to have the NLP pipeline extract features one a single document from my corpus. 
-- Categorized corpus reader was having issues. so I simplified to a simple reader only looking at one document. 
 - Need to continue to work on the functions for feature extraction as they are running into problems.
 
 
