@@ -2,6 +2,7 @@
 import nltk
 import spacy
 import string, random, re, os #sklearn# contractions, matplotlib,
+import numpy as np
 
 from nltk import word_tokenize
 from nltk import bigrams, trigrams, ngrams
@@ -87,17 +88,18 @@ def corpus_reader_categorized_example_manual():
 
 
 def corpus_counts(corpus_reader):
+	doc_counts = np.array([['name','num_chars', 'num_words', 'num_sents', 'num_vocab']])
 	for fileids in corpus_reader.fileids():
 		num_chars = len(corpus_reader.raw(fileids))
 		num_words = len(corpus_reader.words(fileids))
 		num_sents = len(corpus_reader.sents(fileids))
 		num_vocab = len(set([w.lower() for w in corpus_reader.words(fileids)]))
 		# frequency_distribution = FreqDist(corpus_reader.words(fileids))
-		file_counts = [['num_chars', 'num_words', 'num_sents', 'num_vocab'],
-									 [num_chars, num_words, num_sents, num_vocab]]
-		# how do I make the output a matrix of values rather than this printout?
-		print('From corpus_counts():', file_counts)
-		return file_counts
+		file_counts = np.array([fileids, num_chars, num_words, num_sents, num_vocab])
+		doc_counts = np.append(doc_counts, [file_counts], axis = 0)
+
+		print(doc_counts)
+		return doc_counts
 
 
 def nlp_pipe(corpus_reader):
@@ -120,7 +122,10 @@ def nlp_pipe(corpus_reader):
 		content = [porter_stemmer.stem(word) for word in content]
 		content = [word_net_lemmatizer.lemmatize(word) for word in content]
 		
-		Bag_of_Words(content)
+		Top_BOW = Bag_of_Words(content)
+		Top_BOW = list(map(lambda i: (fileids, i), Top_BOW))
+		# Top_BOW_Matrix = np.array(Top_BOW)
+		print(Top_BOW)
 		print()
 		Get_Bigrams(content)
 		print()
@@ -148,13 +153,8 @@ def Bag_of_Words(content):
 		# IDs the most common 20 words for each fileid
 		Top_words = counts.most_common(n=20)
 		# Prints the most common 20 words for each fileid
-		# print('\n\n')
-		print(Top_words)
+		# print(Top_words)
 		return Top_words
-		# Compute the Relative Frequencies
-		# for word in counts:
-		#  rel_freq = counts[word] / float(total_count)  # Why does it not work when I try "T = counts[word] /= float(total_count)"
-		#  print(rel_freq)
 
 
 # Bigrams
