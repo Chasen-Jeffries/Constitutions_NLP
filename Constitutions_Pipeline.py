@@ -3,6 +3,7 @@ import nltk
 import spacy
 import string, random, re, os #sklearn# contractions, matplotlib,
 import numpy as np
+import pandas as pd
 
 from nltk import word_tokenize
 from nltk import bigrams, trigrams, ngrams
@@ -109,10 +110,15 @@ def nlp_pipe(corpus_reader):
 	stop_words = stopwords.words('english')
 	stop_words = [
 		'|', '&', '!', '@', '#', '$', '%', '*', '(', ')', '-', '_', "'", ";", ":",
-		"'", ".",","
+		"'", ".",",","1","2","3","4","5","6","7","8","9","0"
 	] + stop_words
 	porter_stemmer = PorterStemmer()
 	word_net_lemmatizer = WordNetLemmatizer()
+
+	BOW_Matrix = [['test','australia',1]]
+	BOW_Matrix = pd.DataFrame(BOW_Matrix)
+	BOW_Matrix.columns = ['name', 'word','value']
+
 
 	# Construct the NLP pipeline
 	for fileids in corpus_reader.fileids():
@@ -123,25 +129,40 @@ def nlp_pipe(corpus_reader):
 		#content = [contractions.fix(word) for word in content]  # expand contractions
 		content = [porter_stemmer.stem(word) for word in content]
 		content = [word_net_lemmatizer.lemmatize(word) for word in content]
-		
+				
 		Top_BOW = Bag_of_Words(content)
-		Top_BOW = list(map(lambda i: (fileids, i), Top_BOW))
-		# Top_BOW_Matrix = np.array(Top_BOW)
-		print(Top_BOW)
+		Top_BOW = np.array(Top_BOW)
+		# Top_BOW = list(map(lambda i: (fileids, i), Top_BOW))
+		Top_BOW = pd.DataFrame(Top_BOW)
+		Top_BOW.columns = ['word', 'freq']
+		Top_BOW = Top_BOW.drop('freq', axis = 1)	
+		file_name = [fileids] * 20
+		value = [1] * 20
+		Top_BOW.insert(0, "name", file_name)	
+		Top_BOW.insert(1, "value", value)	
+		# Top_BOW = Top_BOW.pivot(index = 'name', columns='word', values = 'value')
+		BOW_Matrix = pd.merge(BOW_Matrix, Top_BOW, on = ['name','word','value'], how ='outer')
+		BOW_Matrix = BOW_Matrix[BOW_Matrix.name != 'test']
+
+		# BOW_Matrix = BOW_Matrix.pivot(index ='name', columns='word', values = 'value')
+
+		
+		print(BOW_Matrix)
+		# print(Top_BOW)
 		print()
 		Top_Bigrams = Get_Bigrams(content)
 		Top_Bigrams = list(map(lambda i: (fileids, i), Top_Bigrams))
-		print(Top_Bigrams)
+		# print(Top_Bigrams)
 		print()
 		Top_Trigrams = Get_Trigrams(content)
 		Top_Trigrams = list(map(lambda i: (fileids, i), Top_Trigrams))
-		print(Top_Trigrams)
+		# print(Top_Trigrams)
 		print()
 		Top_Quadgrams = Get_Quadgrams(content)
 		Top_Quadgrams = list(map(lambda i: (fileids, i), Top_Quadgrams))
-		print(Top_Quadgrams)
+		# print(Top_Quadgrams)
 		print()
-		
+
 		# print(content)
 		#  Get_NER(content)
 
