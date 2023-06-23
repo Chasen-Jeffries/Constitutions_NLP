@@ -54,6 +54,8 @@ def corpus_reader_plain_example():
 					'Turkey_Constitution.txt',
 					'US_Constitution.txt',
 					'Venezuela_Constitution.txt'])
+	# for document in corpus_reader.fileids():
+	#	print(document)
 	return corpus_reader
 
 
@@ -127,21 +129,21 @@ def nlp_pipe(corpus_reader):
 		# Top_BOW_Matrix = np.array(Top_BOW)
 		print(Top_BOW)
 		print()
-		Get_Bigrams(content)
+		Top_Bigrams = Get_Bigrams(content)
+		Top_Bigrams = list(map(lambda i: (fileids, i), Top_Bigrams))
+		print(Top_Bigrams)
 		print()
-		Get_Trigrams(content)
+		Top_Trigrams = Get_Trigrams(content)
+		Top_Trigrams = list(map(lambda i: (fileids, i), Top_Trigrams))
+		print(Top_Trigrams)
 		print()
-		Get_Quadgrams(content)
+		Top_Quadgrams = Get_Quadgrams(content)
+		Top_Quadgrams = list(map(lambda i: (fileids, i), Top_Quadgrams))
+		print(Top_Quadgrams)
 		print()
-		print(content)
-		#  Get_Bigrams(content)
-		#  Get_Trigrams(content)
-		#  Get_Quadgrams(content)
-		#  Get_POSCounts(content)
+		
+		# print(content)
 		#  Get_NER(content)
-
-		return content
-
 
 # Feature Extraction
 # Bigram, Trigram, Quadgram, NER group,
@@ -164,7 +166,7 @@ def Get_Bigrams(content):
 	# IDs the most common 20 words for each fileid
 	top_bigrams = bigrams_count.most_common(n=20)
 	# Prints the most common 20 words for each fileid
-	print(top_bigrams)
+	# print(top_bigrams)
 	return top_bigrams
 
 # Trigrams
@@ -174,7 +176,7 @@ def Get_Trigrams(content):
 	# IDs the most common 20 words for each fileid
 	top_trigrams = trigrams_count.most_common(n=20)
 	# Prints the most common 20 words for each fileid
-	print(top_trigrams)
+	# print(top_trigrams)
 	return top_trigrams
 
 
@@ -186,7 +188,7 @@ def Get_Quadgrams(content):
 	# IDs the most common 20 words for each fileid
 	top_quadgrams = quadgrams_count.most_common(n=20)
 	# Prints the most common 20 words for each fileid
-	print(top_quadgrams)
+	# print(top_quadgrams)
 	return top_quadgrams
 
 
