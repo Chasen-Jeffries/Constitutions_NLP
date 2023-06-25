@@ -4,8 +4,6 @@ import spacy
 import string, random, re, os #sklearn# contractions, matplotlib,
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 from nltk import word_tokenize
 from nltk import bigrams, trigrams, ngrams
@@ -21,6 +19,8 @@ from collections import defaultdict
 
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
+
+# from sklearn import CountVectorizer
 
 import random
 import functools
@@ -106,7 +106,6 @@ def corpus_counts(corpus_reader):
 
 
 def nlp_pipe(corpus_reader):
-
 	print('\n\n')
 	stop_words = stopwords.words('english')
 	stop_words = [
@@ -115,12 +114,11 @@ def nlp_pipe(corpus_reader):
 	] + stop_words
 	porter_stemmer = PorterStemmer()
 	word_net_lemmatizer = WordNetLemmatizer()
-	
-	vectorizer = TfidfVectorizer()
-	main_bow = []
-	main_bigrams = []
-	main_trigrams = []
-	main_quadgrams = []
+
+	BOW_Matrix = [['test','australia',1]]
+	BOW_Matrix = pd.DataFrame(BOW_Matrix)
+	BOW_Matrix.columns = ['name', 'word','value']
+
 
 	# Construct the NLP pipeline
 	for fileids in corpus_reader.fileids():
@@ -131,33 +129,38 @@ def nlp_pipe(corpus_reader):
 		#content = [contractions.fix(word) for word in content]  # expand contractions
 		content = [porter_stemmer.stem(word) for word in content]
 		content = [word_net_lemmatizer.lemmatize(word) for word in content]
+				
+		Top_BOW = Bag_of_Words(content)
+		Top_BOW = np.array(Top_BOW)
+		# Top_BOW = list(map(lambda i: (fileids, i), Top_BOW))
+		Top_BOW = pd.DataFrame(Top_BOW)
+		Top_BOW.columns = ['word', 'freq']
+		Top_BOW = Top_BOW.drop('freq', axis = 1)	
+		file_name = [fileids] * 20
+		value = [1] * 20
+		Top_BOW.insert(0, "name", file_name)	
+		Top_BOW.insert(1, "value", value)	
+		# Top_BOW = Top_BOW.pivot(index = 'name', columns='word', values = 'value')
+		BOW_Matrix = pd.merge(BOW_Matrix, Top_BOW, on = ['name','word','value'], how ='outer')
+		BOW_Matrix = BOW_Matrix[BOW_Matrix.name != 'test']
 
-		# Get Bag_of_Word_Feature
-		Top_BOW = Bag_of_Words(content)	
-		main_bow.append(' '.join(Top_BOW))
-		main_bow_vectorized = vectorizer.fit_transform(main_bow)		
-		print(main_bow_vectorized)	
-		print()
+		# BOW_Matrix = BOW_Matrix.pivot(index ='name', columns='word', values = 'value')
+
 		
-		# Get Bigrams Feature
+		print(BOW_Matrix)
+		# print(Top_BOW)
+		print()
 		Top_Bigrams = Get_Bigrams(content)
-		main_bigrams.append(' '.join(Top_Bigrams))
-		main_bigrams_vectorized = vectorizer.fit_transform(main_bigrams)
-		print(main_bigrams_vectorized)
+		Top_Bigrams = list(map(lambda i: (fileids, i), Top_Bigrams))
+		# print(Top_Bigrams)
 		print()
-
-		# Get Trigrams Feature
 		Top_Trigrams = Get_Trigrams(content)
-		main_trigrams.append(' '.join(Top_Trigrams))
-		main_trigrams_vectorized = vectorizer.fit_transform(main_trigrams)
-		print(main_trigrams_vectorized)
+		Top_Trigrams = list(map(lambda i: (fileids, i), Top_Trigrams))
+		# print(Top_Trigrams)
 		print()
-
-		# Get Quadgrams Feature
 		Top_Quadgrams = Get_Quadgrams(content)
-		main_quadgrams.append(' '.join(Top_Quadgrams))
-		main_quadgrams_vectorized = vectorizer.fit_transform(main_quadgrams)
-		print(main_quadgrams_vectorized)
+		Top_Quadgrams = list(map(lambda i: (fileids, i), Top_Quadgrams))
+		# print(Top_Quadgrams)
 		print()
 
 		# print(content)
@@ -168,12 +171,12 @@ def nlp_pipe(corpus_reader):
 
 
 # Bag of Words
-def Bag_of_Words(content):		
+def Bag_of_Words(content):
 		counts = Counter(content)
 		# IDs the most common 20 words for each fileid
 		Top_words = counts.most_common(n=20)
 		# Prints the most common 20 words for each fileid
-		Top_words = [word for word, freq in Top_words]
+		# print(Top_words)
 		return Top_words
 
 
@@ -184,9 +187,6 @@ def Get_Bigrams(content):
 	# IDs the most common 20 words for each fileid
 	top_bigrams = bigrams_count.most_common(n=20)
 	# Prints the most common 20 words for each fileid
-	top_bigrams = list(top_bigrams)
-	top_bigrams = [word for word, freq in top_bigrams]
-	top_bigrams = [' '.join(bigram) for bigram in top_bigrams]
 	# print(top_bigrams)
 	return top_bigrams
 
@@ -197,9 +197,6 @@ def Get_Trigrams(content):
 	# IDs the most common 20 words for each fileid
 	top_trigrams = trigrams_count.most_common(n=20)
 	# Prints the most common 20 words for each fileid
-	top_trigrams = list(top_trigrams)
-	top_trigrams = [word for word, freq in top_trigrams]
-	top_trigrams = [' '.join(trigram) for trigram in top_trigrams]
 	# print(top_trigrams)
 	return top_trigrams
 
@@ -212,9 +209,6 @@ def Get_Quadgrams(content):
 	# IDs the most common 20 words for each fileid
 	top_quadgrams = quadgrams_count.most_common(n=20)
 	# Prints the most common 20 words for each fileid
-	top_quadgrams = list(top_quadgrams)
-	top_quadgrams = [word for word, freq in top_quadgrams]
-	top_quadgrams = [' '.join(quadgram) for quadgram in top_quadgrams]
 	# print(top_quadgrams)
 	return top_quadgrams
 
