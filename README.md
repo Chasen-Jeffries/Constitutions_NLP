@@ -1,7 +1,7 @@
 # An NLP analysis of democratic and competitive authoritarian constitutions
 
 ## Current situation:
-Current goal is to expand the size of the corpus to 50 docs to test predictive capabilities for a larger dataset. 
+Current goal is to expand the size of the corpus to 50 docs to test predictive capabilities for a larger dataset.  
 
 
 ## Problem Statement:
