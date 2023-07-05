@@ -253,7 +253,7 @@ def Log_Reg(Main_Data):
 	X = Main_Data[['num_chars', 'num_words', 'num_sents', 'num_vocab', 'norp_count', 'org_count', 'person_count', 'gpe_count']]  # Input features
 	y = Main_Data['regime']
 	# Create Test, Train Split
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=123)
 	# Define Logreg
 	logreg = LogisticRegression()
 	# Fit the model
@@ -279,10 +279,10 @@ def NN_Classifier(Main_Data):
 	y = Main_Data['regime']
 
 	# Split the data into train and test sets
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=123)
 
 	# Create and train a multi-layer perceptron (MLP) classifier
-	clf = MLPClassifier(hidden_layer_sizes=(100, 100), max_iter=1000, random_state=42)
+	clf = MLPClassifier(hidden_layer_sizes=(100, 100), max_iter=1000, random_state=123)
 	clf.fit(X_train, y_train)
 
 	# Predict the test set labels
@@ -312,6 +312,10 @@ def NN_Classifier(Main_Data):
 
 
 
+
+
+
+
 # Random Forest
 def RF_Classifier(Main_Data):
 	# ID DV and IV Vars
@@ -319,10 +323,10 @@ def RF_Classifier(Main_Data):
 	y = Main_Data['regime']
 
 	# Split the data into train and test sets
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=123)
 
 	# Create a Random Forest classifier
-	rtf = RandomForestClassifier(n_estimators=100, random_state=42)
+	rtf = RandomForestClassifier(n_estimators=100, random_state=123)
 
 	# Train the classifier
 	rtf.fit(X_train, y_train)
