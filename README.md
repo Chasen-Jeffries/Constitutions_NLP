@@ -1,35 +1,29 @@
-# An NLP analysis of democratic and competitive authoritarian constitutions
+# 📜 NLP Analysis of Democratic and Competitive Authoritarian Constitutions 🌍
 
-## Current situation:
-Current goal is to expand the size of the corpus to 50 docs to test predictive capabilities for a larger dataset.  
+## 🎯 Project Overview
+This project delves into the fascinating world of constitutions, employing Natural Language Processing (NLP) to uncover whether the foundational texts of democratic and competitive authoritarian governments speak a different linguistic language. Amidst the global complexity of regimes that blend democratic veneers with authoritarian cores, our mission is to discover unique linguistic markers that could reveal the true nature of a government's regime. Initial tests and explorations have already shown promising results, suggesting that our approach could indeed illuminate the nuanced linguistic distinctions between these types of regimes.
 
+## 📈 Current Situation
+- **Objective**: Expand our corpus to a robust collection of 50 documents, aiming to enhance the dataset's breadth and thereby refine our model's predictive prowess.
 
-## Problem Statement:
-Since the end of the cold war, non-democratic national governments have attempted to do a better job of disguising their authoritarian traits. This has led to the rise of competitive authoritarian governments. These governments have elements of democracies, including frequent elections, that allow the government to claim to be democratic. However, they violate critical democratic elements including, free and fair elections, civil liberties, & voting access (nearly the whole adult population can vote). Many of these rules and concepts are secured through constitutions which define the scope and role of institutions in these new governments. The modern world has a harder time than ever determining if a nations regime is truly a democracy or a competitive authoritarian government. We want to know if there is a natural language difference in the constitutions of democracies and competitive authoritarian governments. Do democratic nations constitutions contain different natural language elements than competitive authoritarian governments? And if they do, can we use natural language processing (NLP) techniques to predict the regime of a nation based on their constitution? This project will undertake an initial exploration into whether NLP of constitutions can predict regime type. We suspect that a highly focused NLP analysis would be able to identify differences, possibly through relationship extraction or sentiment analysis, between the regimes. However for this initial, relatively low complexity NLP analysis, we hypothesize that democratic and competitive authoritarian constitutions will be extremely similar and may lack a natural language difference.
+## ❓ Problem Statement
+In the shadow of the Cold War's conclusion, the art of governance has seen a shift with non-democratic entities cloaking their authoritarianism beneath democratic facades. Competitive authoritarian regimes, characterized by their electoral charades yet fundamental democratic deficiencies, have muddied the waters of regime classification. Through the lens of NLP, we venture to uncover if the constitutions of democracies and competitive authoritarianisms narrate different tales. This exploration seeks to harness the power of NLP in forecasting a nation's regime through its constitutional script.
 
-## Research Plan:
-#### Corpus:
-Our corpus, or dataset, will be composed of the constitutions of ten nations. Each constitution will be translated into english, our data comes from the comparative constitutions project. This will be split into two groups of five democracies (D) and five competitive authoritarian (CA) governments. We have choses nations based on their relatively clear status as either a democracy or competitive authoritarian government. We tried to select a representative sample of nations in many regions of the world. We chose the following nations: 
-- CA governments: Turkey, China, Russia, Egypt, Venezuela
--	D governments: US, France, Germany, Australia, Japan
+## 🚀 Research Plan
 
-#### Analysis:
-We plan to use a combination of micro and macro level analysis to investigate our research question. The micro level analysis will analyze features at the sentence level for each document in our corpus. The macro level analysis will investigate the similarities and differences between the constitutions of democracies and competitive authoritarian governments. 
-We will examine the constitutions of each nation individually at sentence level. This micro level analysis will inform us of the characteristics and key elements of each individual nation. The micro level analysis look at features for attributes such as 1,2,3 word pair frequency, number of words, frequency of words, topic modeling (LDA), and possibly a relationship extraction.
-Then we will compare the micro analysis of the democratic constitutions with the competitive authoritarian constitutions to see if there are macro level differences. We will use the microfeatures as our IVs and the constitution type (Democratic vs Competitive authoritarian) as a binary DV to train our model. 
+### 📚 Corpus
+Our scholarly journey is navigated through a carefully curated dataset of constitutions from ten diverse nations, partitioned equally between democracies (D) and competitive authoritarian (CA) regimes, offering a window into the varied landscapes of global governance.
 
-#### NLP pipeline:
-1. Original Corpus
-2. Data exploration 
-3. Cleaning & Preprocessing (lower -> contractions -> stop words -> stemming -> lemma -> tokenization -> POS tag)
-5. Feature extraction (Word count, Sentence count, Paragraph count, Top_Bigrams, Top_Trigrams, Top_Quadgrams, POS_Counts, NER_Counts) 
-6. Modeling (Machine Learning or logistic model)
-7. Evaluation 
+### 🔍 Analysis
+Our investigative lens zooms in at the micro level, dissecting sentence-level constructs, and pans out to a macro view, comparing the democratic and authoritarian tapestries. This bifocal approach integrates linguistic minutiae with overarching narratives, setting the stage for a predictive model that uses linguistic features as clues to a constitution's democratic or authoritarian essence.
 
-#### Evaluation:
-We will likely use a test-train split to cross-validate our model and prevent overfitting, however, we fear our sample size of 10 documents may be too small to effectively use the method. Therefore, we may simply undertake a logistic regression or similar model as an initial exploratory analysis to determine if there are sufficient differences in their natural language. This initial exploratory analysis could act as a test case that will allow researchers to later capture a much larger corpus of constitutions and test prediction ML models.  
-If we use a logistic regression, we will evaluate the model based on the substantive and statistical significance of our variables and the overall model fit (AIC and adj. R sq). If we use a machine learning model and test-train split, we will evaluate our model using a confusion matrix and area under the ROC curve. This will allow us to evaluate the precision, recall, & accuracy of our model. These metrics will determine the effectiveness of our model at predicting if the constitution of a nation belongs to a democracy or competitive authoritarian government. 
+### 🛠 NLP Pipeline
+1. **Original Corpus**: The starting point of our linguistic expedition.
+2. **Data Exploration**: A preliminary sift through our textual treasure.
+3. **Cleaning & Preprocessing**: A meticulous process to prepare the text for analysis.
+4. **Feature Extraction**: Mining the text for linguistic gems.
+5. **Modeling**: Crafting the predictive model.
+6. **Evaluation**: Assessing the model's foresight.
 
-
-
-
+## 📊 Evaluation
+Given our intimate sample size, we tread carefully with an exploratory analysis, potentially laying the groundwork for larger, more definitive studies. Our evaluative gaze will rest on the model's clarity of vision, its precision, recall, and the narrative it weaves about the accuracy of our linguistic conjectures.
